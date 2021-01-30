@@ -22,7 +22,7 @@ class CpppeglibConan(ConanFile):
         return {
             "Visual Studio": "15.7",
             "gcc": "7",
-            "clang": "5",
+            "clang": "6",
             "apple-clang": "10"
         }
 
@@ -39,8 +39,11 @@ class CpppeglibConan(ConanFile):
         minimum_version = self._compilers_minimum_version.get(str(self.settings.compiler), False)
         if not minimum_version:
             self.output.warn("{} {} requires C++17. Your compiler is unknown. Assuming it supports C++14.".format(self.name, self.version))
-        # elif lazy_lt_semver(str(self.settings.compiler.version), minimum_version):
-        #     raise ConanInvalidConfiguration("{} {} requires C++17, which your compiler does not support.".format(self.name, self.version))
+        elif lazy_lt_semver(str(self.settings.compiler.version), minimum_version):
+            raise ConanInvalidConfiguration("{} {} requires C++17, which your compiler does not support.".format(self.name, self.version))
+
+        if self.settings.compiler == "clang" and tools.Version(self.settings.compiler.version) == "7" and tools.stdcpp_library(self) == "stdc++":
+            raise ConanInvalidConfiguration("clang 7 not supported with libstdc++")
 
     def package_id(self):
         self.info.header_only()
