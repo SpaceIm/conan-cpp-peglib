@@ -56,5 +56,6 @@ class CpppeglibConan(ConanFile):
     def package_info(self):
         if self.settings.os == "Linux":
             self.cpp_info.system_libs = ["pthread"]
+            self.cpp_info.cxxflags.append("-pthread")
         if self.settings.compiler == "Visual Studio":
             self.cpp_info.cxxflags.append("/Zc:__cplusplus")
