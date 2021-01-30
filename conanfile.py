@@ -42,9 +42,6 @@ class CpppeglibConan(ConanFile):
         elif lazy_lt_semver(str(self.settings.compiler.version), minimum_version):
             raise ConanInvalidConfiguration("{} {} requires C++17, which your compiler does not support.".format(self.name, self.version))
 
-        if self.settings.compiler == "clang" and tools.Version(self.settings.compiler.version) == "7" and tools.stdcpp_library(self) == "stdc++":
-            raise ConanInvalidConfiguration("clang 7 not supported with libstdc++")
-
     def package_id(self):
         self.info.header_only()
 
@@ -60,5 +57,8 @@ class CpppeglibConan(ConanFile):
         if self.settings.os == "Linux":
             self.cpp_info.system_libs = ["pthread"]
             self.cpp_info.cxxflags.append("-pthread")
+            if self.settings.compiler == "clang" and tools.stdcpp_library(self) == "stdc++" and \
+               tools.Version(self.settings.compiler.version) == "7":
+                self.cpp_info.cxxflags.append("-rtlib=compiler-rt")
         if self.settings.compiler == "Visual Studio":
             self.cpp_info.cxxflags.append("/Zc:__cplusplus")
