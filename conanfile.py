@@ -59,6 +59,7 @@ class CpppeglibConan(ConanFile):
             self.cpp_info.cxxflags.append("-pthread")
             if self.settings.compiler == "clang" and tools.stdcpp_library(self) == "stdc++" and \
                tools.Version(self.settings.compiler.version) == "7":
-                self.cpp_info.cxxflags.append("-rtlib=compiler-rt")
+                self.cpp_info.exelinkflags.append("-rtlib=compiler-rt")
+                self.cpp_info.sharedlinkflags.append("-rtlib=compiler-rt")
         if self.settings.compiler == "Visual Studio":
             self.cpp_info.cxxflags.append("/Zc:__cplusplus")
